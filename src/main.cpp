@@ -1,20 +1,21 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 int run(std::string line){
   std::cout << line;
   printf("\n");
   return 0;
 }
+
 int runFile(char* filename){
   std::string filenameStr(filename);
   std::ifstream input(filenameStr);
-  int lastResult = 0;
-  for(std::string line; getline( input, line ); ){
-    lastResult = run(line);
-  }
-  return lastResult;
+  std::stringstream buffer;
+  buffer << input.rdbuf();
+
+  return run(buffer.str());
 }
 
 int runPrompt(){
