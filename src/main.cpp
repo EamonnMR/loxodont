@@ -1,12 +1,20 @@
 #include <iostream>
+#include <string>
 
-int runFile(char*){
-  return 0;
+int runFile(char* filename){
+  std::ifstream input(filename);
+  int lastResult = 0;
+  for(std::string line; getline( input, line ); ){
+    lastResult = run(line)
+  }
+  return lastResult;
 }
 
 int runPrompt(){
   return 0;
 }
+
+int run
 
 int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
