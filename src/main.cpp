@@ -4,10 +4,15 @@
 #include <sstream>
 #include <editline/readline.h>
 
+const int EXIT_ERROR = 65;
+const int EXIT_OK = 0;
+
+bool hadError = false;
+
 int run(std::string line){
   std::cout << line;
   printf("\n");
-  return 0;
+  return EXIT_OK;
 }
 
 int runFile(char* filename){
@@ -28,14 +33,24 @@ int runPrompt(){
   return 0;
 }
 
+void report(int line, std::string where, std::string message){
+  std::cout << "[line " << line << "] error where" << message << "\n";
+  hadError = true;
+}
+
+void error(int line, std::string message){
+  report(line, std::string{""}, message);
+}
+
 int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
   if(argc > 2){ 
     std::cout << "Usage: loxodont [script]\n";
     return 0;
   } else if (argc == 2){
-    return runFile(argv[1]);
+    runFile(argv[1]);
   } else {
-    return runPrompt();
+    runPrompt();
   }
+  return hadError ? EXIT_ERROR : EXIT_OK;
 }
