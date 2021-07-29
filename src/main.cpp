@@ -4,6 +4,7 @@
 #include <sstream>
 #include <array>
 #include <editline/readline.h>
+#include <vector>
 
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
@@ -60,6 +61,11 @@ struct Token {
 std::string Token::toString(){
   return std::string {tokenTypeStrings[this->type] + ": " + this->lexeme};
 }
+
+struct Lexer {
+  std::vector<Token> tokens;
+  std::string source;
+};
 
 bool hadError = false;
 
