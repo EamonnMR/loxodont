@@ -2,10 +2,64 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <array>
 #include <editline/readline.h>
 
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
+
+enum TokenType {
+  // Single-character tokens.
+  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+
+  // One or two character tokens.
+  BANG, BANG_EQUAL,
+  EQUAL, EQUAL_EQUAL,
+  GREATER, GREATER_EQUAL,
+  LESS, LESS_EQUAL,
+
+  // Literals.
+  IDENTIFIER, STRING, NUMBER,
+
+  // Keywords.
+  AND, KW_CLASS, ELSE, FALSE, FUN, KW_FOR, KW_IF, NIL, OR,
+  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+
+  KW_EOF
+};
+// https://stackoverflow.com/a/6281535/1048464
+static std::array<std::string, 39> tokenTypeStrings = {
+  // Single-character tokens.
+  "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
+  "COMMA", "DOT", "MINUS", "PLUS", "SEMICOLON", "SLASH", "STAR",
+
+  // One or two character tokens.
+  "BANG", "BANG_EQUAL",
+  "EQUAL", "EQUAL_EQUAL",
+  "GREATER", "GREATER_EQUAL",
+  "LESS", "LESS_EQUAL",
+
+  // Literals.
+  "IDENTIFIER", "STRING", "NUMBER",
+
+  // Keywords.
+  "AND", "KW_CLASS", "ELSE", "FALSE", "FUN", "KW_FOR", "KW_IF", "NIL", "OR",
+  "PRINT", "RETURN", "SUPER", "THIS", "TRUE", "VAR", "WHILE",
+
+  "KW_EOF"
+};
+struct Token {
+  TokenType type;
+  std::string lexeme;
+  void * literal;  // TODO: Maybe do a union here? Use Boost::Variant?
+  int line;
+  std::string toString();
+};
+
+std::string Token::toString(){
+  return std::string {tokenTypeStrings[this->type] + ": " + this->lexeme};
+}
 
 bool hadError = false;
 
@@ -25,6 +79,7 @@ int runFile(char* filename){
 
 int runPrompt(){
   while(true){
+    hadError = false;
     char* input_raw = readline("loxodont> ");
     add_history(input_raw);
     std::string input {input_raw};
