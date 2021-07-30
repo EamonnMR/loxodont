@@ -3,11 +3,16 @@
 #include <string>
 #include <sstream>
 #include <array>
+#include <variant>
+
 #include <editline/readline.h>
 #include <vector>
 
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
+
+// Linter error here, it seems
+typedef std::variant<int64_t, long double, bool, std::string> Literal;
 
 enum TokenType {
   // Single-character tokens.
@@ -53,7 +58,7 @@ static std::array<std::string, 39> tokenTypeStrings = {
 struct Token {
   TokenType type;
   std::string lexeme;
-  void * literal;  // TODO: Maybe do a union here? Use Boost::Variant?
+  Literal literal;
   int line;
   std::string toString();
 };
