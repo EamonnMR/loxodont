@@ -35,7 +35,7 @@ enum TokenType {
   KW_EOF
 };
 // https://stackoverflow.com/a/6281535/1048464
-static std::array<std::string, 39> tokenTypeStrings = {
+static std::array<std::string, 39> tokenTypeStrings {
   // Single-character tokens.
   "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
   "COMMA", "DOT", "MINUS", "PLUS", "SEMICOLON", "SLASH", "STAR",
@@ -61,18 +61,71 @@ struct Token {
   Literal literal;
   int line;
   std::string toString();
+  // TODO: Constructor
 };
 
 std::string Token::toString(){
   return std::string {tokenTypeStrings[this->type] + ": " + this->lexeme};
 }
 
-struct Lexer {
+struct Scanner {
   std::vector<Token> tokens;
   std::string source;
+  size_t start;
+  size_t current;
+  size_t line;
+
+  Scanner(std::string);
+  std::vector<Token> scanTokens();
+  bool isAtEnd();
+  char advance();
+  void scanToken();
+  void addToken(TokenType);
 };
 
-bool hadError = false;
+Scanner::Scanner(std::string src){
+  std::vector<Token> tokens {};
+  source = src;
+}
+
+std::vector<Token> Scanner::scanTokens(){
+  while(!isAtEnd()){
+    start = current;
+    scanToken();
+  }
+  return tokens;
+  // TODO: Tokens.push back Token
+}
+
+bool Scanner::isAtEnd(){
+  return current >= source.length();
+}
+
+char Scanner::advance(){
+  return source.at(current++);
+}
+
+void Scanner::scanToken(){
+  char c = {advance()};
+  switch(c){
+    case '(': addToken(LEFT_PAREN); break;
+    case ')': addToken(RIGHT_PAREN); break;
+    case '{': addToken(LEFT_BRACE); break;
+    case '}': addToken(RIGHT_BRACE); break;
+    case ',': addToken(COMMA); break;
+    case '.': addToken(DOT); break;
+    case '-': addToken(MINUS); break;
+    case '+': addToken(PLUS); break;
+    case ';': addToken(SEMICOLON); break;
+    case '*': addToken(STAR); break;
+  }
+}
+
+void Scanner::addToken(TokenType t){
+
+}
+
+bool hadError {false};
 
 int run(std::string line){
   std::cout << line;
@@ -91,7 +144,7 @@ int runFile(char* filename){
 int runPrompt(){
   while(true){
     hadError = false;
-    char* input_raw = readline("loxodont> ");
+    char* input_raw {readline("loxodont> ")};
     add_history(input_raw);
     std::string input {input_raw};
     run(input);
