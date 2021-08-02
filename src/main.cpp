@@ -117,6 +117,7 @@ struct Scanner {
   void addToken(TokenType);
   void addToken(TokenType, Literal);
   bool match(char);
+  char peek();
 };
 
 Scanner::Scanner(std::string src){
@@ -146,8 +147,17 @@ char Scanner::advance(){
 
 void Scanner::scanToken(){
   char c = {advance()};
-  // std::cout << "ScanToken: " << c << "\n";
+  std::cout << "ScanToken: " << c << " Current: " << current << "\n";
   switch(c){
+
+    case ' ':
+    case '\r':
+    case '\t':
+      // Ignore whitespace. Fallthrough intentional
+      break;
+
+    case '\n': line++; break;
+
     case '(': addToken(LEFT_PAREN); break;
     case ')': addToken(RIGHT_PAREN); break;
     case '{': addToken(LEFT_BRACE); break;
@@ -158,6 +168,28 @@ void Scanner::scanToken(){
     case '+': addToken(PLUS); break;
     case ';': addToken(SEMICOLON); break;
     case '*': addToken(STAR); break;
+    case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
+    case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
+    case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
+    case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+
+    // Debugging
+    case '1': addToken(NUMBER, int64_t{1}); break;
+    case '2': addToken(NUMBER, int64_t{2}); break;
+    case '3': addToken(NUMBER, int64_t{3}); break;
+    case '4': addToken(NUMBER, int64_t{4}); break;
+
+    
+
+    case '/': 
+      if (match('/')) {
+        // A comment goes until the end of the line.
+        while (peek() != '\n' && !isAtEnd()) advance();
+      } else {
+        addToken(SLASH);
+      }
+      break;
+
     default: error(line, "Unexpected: character"); break;
   }
 }
@@ -167,8 +199,9 @@ void Scanner::addToken(TokenType t){
 }
 
 void Scanner::addToken(TokenType t, Literal literal){
-  std::string text {source.substr(start, current)};
-  tokens.push_back(Token{t, text, literal, line});
+  std::string lexeme {source.substr(start, current-start)};
+  std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
+  tokens.push_back(Token{t,source.substr(start, current-start), literal, line});
 }
 
 
@@ -187,6 +220,12 @@ bool Scanner::match(char expected){
   current ++;
   return true;
 }
+
+char Scanner::peek(){
+  if(isAtEnd()) return '\0';
+  return source.at(current);
+}
+
 
 void runFile(char* filename){
   std::string filenameStr { filename };
