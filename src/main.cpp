@@ -1,18 +1,34 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <sstream>
 #include <array>
 #include <variant>
+#include <vector>
+#include <optional>
 
 #include <editline/readline.h>
-#include <vector>
+
 
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
 
-// Linter error here, it seems
-typedef std::variant<int64_t, long double, bool, std::string> Literal;
+typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
+typedef std::optional<NonNullLiteral> Literal;
+
+void cout_repr(Literal l){
+  if(l.has_value()){
+    NonNullLiteral val {l.value()};
+    // https://stackoverflow.com/a/59477945/1048464
+    // You are not expected to understand this
+    std::visit([](const auto &elem) { std::cout << elem; }, val);
+  } else {
+    std::cout << "null";
+  }
+}
+
+int64_t ZERO = 0;
 
 enum TokenType {
   // Single-character tokens.
@@ -59,13 +75,15 @@ struct Token {
   TokenType type;
   std::string lexeme;
   Literal literal;
-  int line;
+  size_t line;
   std::string toString();
   // TODO: Constructor
 };
 
 std::string Token::toString(){
-  return std::string {tokenTypeStrings[this->type] + ": " + this->lexeme};
+  std::cout << tokenTypeStrings[type] << ": " << lexeme << " ";
+  cout_repr(literal);
+  return std::string {tokenTypeStrings[type] + ": " + lexeme + " "};
 }
 
 struct Scanner {
@@ -81,11 +99,13 @@ struct Scanner {
   char advance();
   void scanToken();
   void addToken(TokenType);
+  void addToken(TokenType, Literal);
 };
 
 Scanner::Scanner(std::string src){
   std::vector<Token> tokens {};
   source = src;
+  std::cout <<src;
 }
 
 std::vector<Token> Scanner::scanTokens(){
@@ -93,8 +113,8 @@ std::vector<Token> Scanner::scanTokens(){
     start = current;
     scanToken();
   }
+  tokens.push_back(Token{KW_EOF, std::string{}, std::nullopt, line});
   return tokens;
-  // TODO: Tokens.push back Token
 }
 
 bool Scanner::isAtEnd(){
@@ -102,11 +122,13 @@ bool Scanner::isAtEnd(){
 }
 
 char Scanner::advance(){
+  std::cout << "current: " << current;
   return source.at(current++);
 }
 
 void Scanner::scanToken(){
   char c = {advance()};
+  std::cout << c << "\n";
   switch(c){
     case '(': addToken(LEFT_PAREN); break;
     case ')': addToken(RIGHT_PAREN); break;
@@ -122,34 +144,42 @@ void Scanner::scanToken(){
 }
 
 void Scanner::addToken(TokenType t){
+  addToken(t, std::nullopt);
+}
 
+void Scanner::addToken(TokenType t, Literal literal){
+  std::string text {source.substr(start, current)};
+  tokens.push_back(Token{t, text, literal, line});
 }
 
 bool hadError {false};
 
-int run(std::string line){
-  std::cout << line;
-  printf("\n");
-  return EXIT_OK;
+void run(std::string source){
+  Scanner scanner {source};
+  std::vector<Token> tokens{};
+  for (Token token : tokens){
+    std::cout << token.toString();
+    std::cout << "\n";
+  }
 }
 
-int runFile(char* filename){
+void runFile(char* filename){
   std::string filenameStr { filename };
   std::ifstream input{filenameStr};
   std::stringstream buffer;
   buffer << input.rdbuf();
-  return run(buffer.str());
+  run(buffer.str());
 }
 
-int runPrompt(){
+void runPrompt(){
   while(true){
     hadError = false;
     char* input_raw {readline("loxodont> ")};
     add_history(input_raw);
     std::string input {input_raw};
+    std::cout << input;
     run(input);
   }
-  return 0;
 }
 
 void report(int line, std::string where, std::string message){
@@ -165,7 +195,7 @@ int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
   if(argc > 2){ 
     std::cout << "Usage: loxodont [script]\n";
-    return 0;
+    return EXIT_OK;
   } else if (argc == 2){
     runFile(argv[1]);
   } else {
