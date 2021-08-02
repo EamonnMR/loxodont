@@ -29,11 +29,12 @@ typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
 typedef std::optional<NonNullLiteral> Literal;
 
 std::string repr(Literal l){
+  /**
+   * Get the string representation of a literal.
+   */
   if(l.has_value()){
     std::string litstr;
     NonNullLiteral val {l.value()};
-    // https://stackoverflow.com/a/59477945/1048464
-    // You are not expected to understand this
     std::visit([litstr](const auto &elem) mutable {
       std::stringstream str {};
       str << elem;
