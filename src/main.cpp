@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <sstream>
 #include <array>
 #include <variant>
 #include <vector>
@@ -17,14 +16,20 @@ const int EXIT_OK = 0;
 typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
 typedef std::optional<NonNullLiteral> Literal;
 
-void cout_repr(Literal l){
+std::string repr(Literal l){
   if(l.has_value()){
+    std::string litstr;
     NonNullLiteral val {l.value()};
     // https://stackoverflow.com/a/59477945/1048464
     // You are not expected to understand this
-    std::visit([](const auto &elem) { std::cout << elem; }, val);
+    std::visit([litstr](const auto &elem) mutable {
+      std::stringstream str {};
+      str << elem;
+      litstr = str.str(); 
+    }, val);
+    return litstr;
   } else {
-    std::cout << "null";
+    return std::string {"null"};
   }
 }
 
@@ -81,9 +86,7 @@ struct Token {
 };
 
 std::string Token::toString(){
-  std::cout << tokenTypeStrings[type] << ": " << lexeme << " ";
-  cout_repr(literal);
-  return std::string {tokenTypeStrings[type] + ": " + lexeme + " "};
+  return std::string {tokenTypeStrings[type] + ": " + lexeme + " " + repr(literal)};
 }
 
 struct Scanner {
@@ -103,12 +106,14 @@ struct Scanner {
 };
 
 Scanner::Scanner(std::string src){
+  start = 0, current = 0, line = 0;
   std::vector<Token> tokens {};
   source = src;
   std::cout <<src;
 }
 
 std::vector<Token> Scanner::scanTokens(){
+  std::cout << "ScanTokens" << "\n";
   while(!isAtEnd()){
     start = current;
     scanToken();
@@ -122,13 +127,12 @@ bool Scanner::isAtEnd(){
 }
 
 char Scanner::advance(){
-  std::cout << "current: " << current;
   return source.at(current++);
 }
 
 void Scanner::scanToken(){
   char c = {advance()};
-  std::cout << c << "\n";
+  // std::cout << "ScanToken: " << c << "\n";
   switch(c){
     case '(': addToken(LEFT_PAREN); break;
     case ')': addToken(RIGHT_PAREN); break;
@@ -156,7 +160,7 @@ bool hadError {false};
 
 void run(std::string source){
   Scanner scanner {source};
-  std::vector<Token> tokens{};
+  std::vector<Token> tokens{scanner.scanTokens()};
   for (Token token : tokens){
     std::cout << token.toString();
     std::cout << "\n";
