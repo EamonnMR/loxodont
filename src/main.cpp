@@ -13,6 +13,18 @@
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
 
+bool hadError {false};
+
+void report(int line, std::string where, std::string message){
+  std::cout << "[line " << line << "] error where" << message << "\n";
+  hadError = true;
+}
+
+void error(int line, std::string message){
+  report(line, std::string{""}, message);
+}
+
+
 typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
 typedef std::optional<NonNullLiteral> Literal;
 
@@ -144,6 +156,7 @@ void Scanner::scanToken(){
     case '+': addToken(PLUS); break;
     case ';': addToken(SEMICOLON); break;
     case '*': addToken(STAR); break;
+    default: error(line, "Unexpected: character"); break;
   }
 }
 
@@ -156,7 +169,6 @@ void Scanner::addToken(TokenType t, Literal literal){
   tokens.push_back(Token{t, text, literal, line});
 }
 
-bool hadError {false};
 
 void run(std::string source){
   Scanner scanner {source};
@@ -184,15 +196,6 @@ void runPrompt(){
     std::cout << input;
     run(input);
   }
-}
-
-void report(int line, std::string where, std::string message){
-  std::cout << "[line " << line << "] error where" << message << "\n";
-  hadError = true;
-}
-
-void error(int line, std::string message){
-  report(line, std::string{""}, message);
 }
 
 int main(int argc, char** argv ){
