@@ -116,6 +116,7 @@ struct Scanner {
   void scanToken();
   void addToken(TokenType);
   void addToken(TokenType, Literal);
+  bool match(char);
 };
 
 Scanner::Scanner(std::string src){
@@ -178,6 +179,13 @@ void run(std::string source){
     std::cout << token.toString();
     std::cout << "\n";
   }
+}
+
+bool Scanner::match(char expected){
+  if(isAtEnd()) return false;
+  if(source.at(current) != expected) return false;
+  current ++;
+  return true;
 }
 
 void runFile(char* filename){
