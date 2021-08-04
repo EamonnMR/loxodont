@@ -119,6 +119,8 @@ struct Scanner {
   bool match(char);
   char peek();
   void scanString();
+  bool isDigit(char);
+  void number();
 };
 
 Scanner::Scanner(std::string src){
@@ -191,7 +193,12 @@ void Scanner::scanToken(){
       }
       break;
 
-    default: error(line, "Unexpected: character"); break;
+    default:
+      if (isDigit(c)){
+        number();
+      } else {
+        error(line, "Unexpected: character"); break;
+      }
   }
 }
 
@@ -205,6 +212,13 @@ void Scanner::addToken(TokenType t, Literal literal){
   tokens.push_back(Token{t,source.substr(start, current-start), literal, line});
 }
 
+bool Scanner::isDigit(char c){
+  return c >= '0' && c <= '9';
+}
+
+void Scanner::number(){
+  // TODO: number literal
+}
 
 void run(std::string source){
   Scanner scanner {source};
