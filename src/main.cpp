@@ -118,6 +118,7 @@ struct Scanner {
   void addToken(TokenType, Literal);
   bool match(char);
   char peek();
+  void scanString();
 };
 
 Scanner::Scanner(std::string src){
@@ -179,7 +180,7 @@ void Scanner::scanToken(){
     case '3': addToken(NUMBER, int64_t{3}); break;
     case '4': addToken(NUMBER, int64_t{4}); break;
 
-    
+    case '"': scanString(); break;
 
     case '/': 
       if (match('/')) {
@@ -226,6 +227,21 @@ char Scanner::peek(){
   return source.at(current);
 }
 
+void Scanner::scanString(){
+  while(peek() != '"') {
+    std::cout << "ScanString, next char: " << peek() << "\n";
+    if(isAtEnd()){
+      error(line, std::string{"Unterminated String"});
+      break;
+    }
+    if (peek() == '\n') line ++;
+    advance();
+  }
+  advance();
+  std::cout << "Scanned String, start: " << start + 1 << " end: " << current - 1 << " length " << current-(start + 1) << "\n";
+  // Exclude quotation marks from the string literal
+  addToken(STRING, source.substr(start + 2, current - (start + 1)));
+}
 
 void runFile(char* filename){
   std::string filenameStr { filename };
