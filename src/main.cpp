@@ -104,13 +104,15 @@ std::string Token::toString(){
 
 struct Scanner {
   std::vector<Token> tokens;
+  Scanner(std::string);
+  std::vector<Token> scanTokens();
+
+  private:
   std::string source;
   size_t start;
   size_t current;
   size_t line;
 
-  Scanner(std::string);
-  std::vector<Token> scanTokens();
   bool isAtEnd();
   char advance();
   void scanToken();
@@ -121,7 +123,10 @@ struct Scanner {
   char peekNext();
   void scanString();
   bool isDigit(char);
+  bool isAlpha(char);
+  bool isAlphaNumeric(char);
   void number();
+  void identifier();
 };
 
 Scanner::Scanner(std::string src){
@@ -197,6 +202,8 @@ void Scanner::scanToken(){
     default:
       if (isDigit(c)){
         number();
+      } else if (isAlpha(c)) {
+        identifier();
       } else {
         error(line, "Unexpected: character"); break;
       }
@@ -267,6 +274,24 @@ void Scanner::scanString(){
   std::cout << "Scanned String, start: " << start + 1 << " end: " << current - 1 << " length " << current-(start + 1) << "\n";
   // Exclude quotation marks from the string literal
   addToken(STRING, source.substr(start + 2, current - (start + 1)));
+}
+
+void Scanner::identifier(){
+  //Since we called this already knowing the first 
+  //char is alpha, ths rest can be numbers or
+  //letters.
+  while(isAlphaNumeric(peek())) advance();
+  addToken(IDENTIFIER);
+}
+
+bool Scanner::isAlpha(char c){
+  return (c >= 'a' && c <= 'z') ||
+         (c >= 'A' && c <= 'Z') ||
+         c == '_';
+}
+
+bool Scanner::isAlphaNumeric(char c){
+  return isAlpha(c) || isDigit(c);
 }
 
 void runFile(char* filename){
