@@ -118,6 +118,7 @@ struct Scanner {
   void addToken(TokenType, Literal);
   bool match(char);
   char peek();
+  char peekNext();
   void scanString();
   bool isDigit(char);
   void number();
@@ -177,10 +178,10 @@ void Scanner::scanToken(){
     case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
 
     // Debugging
-    case '1': addToken(NUMBER, int64_t{1}); break;
-    case '2': addToken(NUMBER, int64_t{2}); break;
-    case '3': addToken(NUMBER, int64_t{3}); break;
-    case '4': addToken(NUMBER, int64_t{4}); break;
+    // case '1': addToken(NUMBER, int64_t{1}); break;
+    //case '2': addToken(NUMBER, int64_t{2}); break;
+    //case '3': addToken(NUMBER, int64_t{3}); break;
+    //case '4': addToken(NUMBER, int64_t{4}); break;
 
     case '"': scanString(); break;
 
@@ -217,7 +218,13 @@ bool Scanner::isDigit(char c){
 }
 
 void Scanner::number(){
-  // TODO: number literal
+  while(isDigit(peek())) advance();
+  if (peek() == '.' && isDigit(peekNext())){
+    advance();
+    while(isDigit(peek())) advance();
+  }
+  std::string numstr { source.substr(start, current-start)};
+  addToken(NUMBER, std::stold(numstr));
 }
 
 void run(std::string source){
@@ -239,6 +246,11 @@ bool Scanner::match(char expected){
 char Scanner::peek(){
   if(isAtEnd()) return '\0';
   return source.at(current);
+}
+
+char Scanner::peekNext(){
+  if(current + 1 >= source.length()) return '\0';
+  return source.at(current + 1);
 }
 
 void Scanner::scanString(){
