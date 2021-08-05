@@ -6,6 +6,7 @@
 #include <variant>
 #include <vector>
 #include <optional>
+#include <unordered_map>
 
 #include <editline/readline.h>
 
@@ -276,12 +277,37 @@ void Scanner::scanString(){
   addToken(STRING, source.substr(start + 2, current - (start + 1)));
 }
 
+static std::unordered_map<std::string, TokenType> keywords {
+  {"and",    AND},
+  {"class",  KW_CLASS},
+  {"else",   ELSE},
+  {"false",  FALSE},
+  {"for",    KW_FOR},
+  {"fun",    FUN},
+  {"if",     KW_IF},
+  {"nil",    NIL},
+  {"or",     OR},
+  {"print",  PRINT},
+  {"return", RETURN},
+  {"super",  SUPER},
+  {"this",   THIS},
+  {"true",   TRUE},
+  {"var",    VAR},
+  {"while",  WHILE},
+};
+
+
 void Scanner::identifier(){
   //Since we called this already knowing the first 
   //char is alpha, ths rest can be numbers or
   //letters.
   while(isAlphaNumeric(peek())) advance();
-  addToken(IDENTIFIER);
+  std::string text {source.substr(start, current - start)};
+  TokenType type {IDENTIFIER};
+  if (keywords.find(text) != keywords.end()){
+    type = keywords[text];
+  }
+  addToken(type);
 }
 
 bool Scanner::isAlpha(char c){
