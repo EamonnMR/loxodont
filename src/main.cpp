@@ -7,7 +7,7 @@
 
 #include <editline/readline.h>
 
-#include "main.h"
+#include "main.hpp"
 
 const int EXIT_ERROR = 65;
 const int EXIT_OK = 0;
