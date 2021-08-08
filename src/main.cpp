@@ -237,7 +237,7 @@ void runPrompt(){
     run(input);
   }
 }
-
+#ifndef testmode
 int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
   if(argc > 2){ 
@@ -250,3 +250,4 @@ int main(int argc, char** argv ){
   }
   return hadError ? EXIT_ERROR : EXIT_OK;
 }
+#endif
