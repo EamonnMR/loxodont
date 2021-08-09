@@ -9,8 +9,6 @@
 
 #include "main.hpp"
 
-const int EXIT_ERROR = 65;
-const int EXIT_OK = 0;
 
 bool hadError {false};
 
@@ -52,7 +50,7 @@ Scanner::Scanner(std::string src){
   start = 0, current = 0, line = 0;
   std::vector<Token> tokens {};
   source = src;
-  std::cout <<src;
+  std::cout << src;
 }
 
 std::vector<Token> Scanner::scanTokens(){
@@ -238,6 +236,9 @@ void runPrompt(){
   }
 }
 #ifndef testmode
+
+const int EXIT_ERROR = 65;
+const int EXIT_OK = 0;
 int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
   if(argc > 2){ 
