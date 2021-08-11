@@ -50,7 +50,6 @@ Scanner::Scanner(std::string src){
   start = 0, current = 0, line = 0;
   std::vector<Token> tokens {};
   source = src;
-  std::cout << src;
 }
 
 std::vector<Token> Scanner::scanTokens(){
@@ -73,7 +72,7 @@ char Scanner::advance(){
 
 void Scanner::scanToken(){
   char c = {advance()};
-  std::cout << "ScanToken: " << c << " Current: " << current << "\n";
+  // std::cout << "ScanToken: " << c << " Current: " << current << "\n";
   switch(c){
 
     case ' ':
@@ -133,7 +132,7 @@ void Scanner::addToken(TokenType t){
 
 void Scanner::addToken(TokenType t, Literal literal){
   std::string lexeme {source.substr(start, current-start)};
-  std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
+  // std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
   tokens.push_back(Token{t,source.substr(start, current-start), literal, line});
 }
 
@@ -179,7 +178,7 @@ char Scanner::peekNext(){
 
 void Scanner::scanString(){
   while(peek() != '"') {
-    std::cout << "ScanString, next char: " << peek() << "\n";
+    // std::cout << "ScanString, next char: " << peek() << "\n";
     if(isAtEnd()){
       error(line, std::string{"Unterminated String"});
       break;
