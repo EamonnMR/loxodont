@@ -15,8 +15,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: install gtest and readline
       run: sudo apt install libgtest-dev
-    - name: install readline
-      run: sudo apt install libreadline-dev
+    - name: install editline
+      run: sudo apt install libedit-dev
     - name: make
       run: make
     - name: make test
