@@ -13,10 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install gtest
-      run: sudo apt install googletest
-    - name: Install gtest-dev
+    - name: Install sources
       run: sudo apt install libgtest-dev
+    - name: Compile gtest sources
+      run: sudo apt-get install cmake && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && ls -al && sudo cp *.a /usr/lib
     - name: install editline
       run: sudo apt install libedit-dev
     - name: make
