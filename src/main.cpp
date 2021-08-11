@@ -3,15 +3,12 @@
 #include <sstream>
 #include <string>
 #include <array>
-#include <variant>
 #include <vector>
-#include <optional>
 
 #include <editline/readline.h>
 
+#include "main.hpp"
 
-const int EXIT_ERROR = 65;
-const int EXIT_OK = 0;
 
 bool hadError {false};
 
@@ -24,9 +21,6 @@ void error(int line, std::string message){
   report(line, std::string{""}, message);
 }
 
-
-typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
-typedef std::optional<NonNullLiteral> Literal;
 
 std::string repr(Literal l){
   /**
@@ -48,92 +42,14 @@ std::string repr(Literal l){
 
 int64_t ZERO = 0;
 
-enum TokenType {
-  // Single-character tokens.
-  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
-
-  // One or two character tokens.
-  BANG, BANG_EQUAL,
-  EQUAL, EQUAL_EQUAL,
-  GREATER, GREATER_EQUAL,
-  LESS, LESS_EQUAL,
-
-  // Literals.
-  IDENTIFIER, STRING, NUMBER,
-
-  // Keywords.
-  AND, KW_CLASS, ELSE, FALSE, FUN, KW_FOR, KW_IF, NIL, OR,
-  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-
-  KW_EOF
-};
-// https://stackoverflow.com/a/6281535/1048464
-static std::array<std::string, 39> tokenTypeStrings {
-  // Single-character tokens.
-  "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACE", "RIGHT_BRACE",
-  "COMMA", "DOT", "MINUS", "PLUS", "SEMICOLON", "SLASH", "STAR",
-
-  // One or two character tokens.
-  "BANG", "BANG_EQUAL",
-  "EQUAL", "EQUAL_EQUAL",
-  "GREATER", "GREATER_EQUAL",
-  "LESS", "LESS_EQUAL",
-
-  // Literals.
-  "IDENTIFIER", "STRING", "NUMBER",
-
-  // Keywords.
-  "AND", "KW_CLASS", "ELSE", "FALSE", "FUN", "KW_FOR", "KW_IF", "NIL", "OR",
-  "PRINT", "RETURN", "SUPER", "THIS", "TRUE", "VAR", "WHILE",
-
-  "KW_EOF"
-};
-struct Token {
-  TokenType type;
-  std::string lexeme;
-  Literal literal;
-  size_t line;
-  std::string toString();
-  // TODO: Constructor
-};
-
 std::string Token::toString(){
   return std::string {tokenTypeStrings[type] + ": " + lexeme + " " + repr(literal)};
 }
-
-struct Scanner {
-  std::vector<Token> tokens;
-  Scanner(std::string);
-  std::vector<Token> scanTokens();
-
-  private:
-  std::string source;
-  size_t start;
-  size_t current;
-  size_t line;
-
-  bool isAtEnd();
-  char advance();
-  void scanToken();
-  void addToken(TokenType);
-  void addToken(TokenType, Literal);
-  bool match(char);
-  char peek();
-  char peekNext();
-  void scanString();
-  bool isDigit(char);
-  bool isAlpha(char);
-  bool isAlphaNumeric(char);
-  void number();
-  void identifier();
-};
 
 Scanner::Scanner(std::string src){
   start = 0, current = 0, line = 0;
   std::vector<Token> tokens {};
   source = src;
-  std::cout <<src;
 }
 
 std::vector<Token> Scanner::scanTokens(){
@@ -156,7 +72,7 @@ char Scanner::advance(){
 
 void Scanner::scanToken(){
   char c = {advance()};
-  std::cout << "ScanToken: " << c << " Current: " << current << "\n";
+  // std::cout << "ScanToken: " << c << " Current: " << current << "\n";
   switch(c){
 
     case ' ':
@@ -216,7 +132,7 @@ void Scanner::addToken(TokenType t){
 
 void Scanner::addToken(TokenType t, Literal literal){
   std::string lexeme {source.substr(start, current-start)};
-  std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
+  // std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
   tokens.push_back(Token{t,source.substr(start, current-start), literal, line});
 }
 
@@ -262,7 +178,7 @@ char Scanner::peekNext(){
 
 void Scanner::scanString(){
   while(peek() != '"') {
-    std::cout << "ScanString, next char: " << peek() << "\n";
+    // std::cout << "ScanString, next char: " << peek() << "\n";
     if(isAtEnd()){
       error(line, std::string{"Unterminated String"});
       break;
@@ -276,12 +192,18 @@ void Scanner::scanString(){
   addToken(STRING, source.substr(start + 2, current - (start + 1)));
 }
 
+
 void Scanner::identifier(){
   //Since we called this already knowing the first 
   //char is alpha, ths rest can be numbers or
   //letters.
   while(isAlphaNumeric(peek())) advance();
-  addToken(IDENTIFIER);
+  std::string text {source.substr(start, current - start)};
+  TokenType type {IDENTIFIER};
+  if (keywords.find(text) != keywords.end()){
+    type = keywords[text];
+  }
+  addToken(type);
 }
 
 bool Scanner::isAlpha(char c){
@@ -312,7 +234,10 @@ void runPrompt(){
     run(input);
   }
 }
+#ifndef testmode
 
+const int EXIT_ERROR = 65;
+const int EXIT_OK = 0;
 int main(int argc, char** argv ){
   // TODO: Use a real argument parsing setup
   if(argc > 2){ 
@@ -325,3 +250,4 @@ int main(int argc, char** argv ){
   }
   return hadError ? EXIT_ERROR : EXIT_OK;
 }
+#endif
