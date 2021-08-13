@@ -2,6 +2,8 @@
 # ifdef testmode
 
 # include "main.hpp"
+# include "scanner.hpp"
+# include "token.hpp"
 # include "gtest/gtest.h"
 # include "string"
 
