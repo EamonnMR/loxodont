@@ -5,11 +5,11 @@
 #include <variant>
 #include <optional>
 
-typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteral;
+typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteralVal;
 
-typedef std::optional<NonNullLiteral> Literal;
+typedef std::optional<NonNullLiteralVal> LiteralVal;
 
-std::string repr(Literal);
+std::string repr(LiteralVal);
 
 enum TokenType {
   // Single-character tokens.
@@ -22,7 +22,7 @@ enum TokenType {
   GREATER, GREATER_EQUAL,
   LESS, LESS_EQUAL,
 
-  // Literals.
+  // LiteralVals.
   IDENTIFIER, STRING, NUMBER,
 
   // Keywords.
@@ -43,7 +43,7 @@ static std::array<std::string, 39> tokenTypeStrings {
   "GREATER", "GREATER_EQUAL",
   "LESS", "LESS_EQUAL",
 
-  // Literals.
+  // LiteralVals.
   "IDENTIFIER", "STRING", "NUMBER",
 
   // Keywords.
@@ -55,7 +55,7 @@ static std::array<std::string, 39> tokenTypeStrings {
 struct Token {
   TokenType type;
   std::string lexeme;
-  Literal literal;
+  LiteralVal literal;
   size_t line;
   std::string toString();
   // TODO: Constructor

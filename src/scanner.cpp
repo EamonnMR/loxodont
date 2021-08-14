@@ -95,7 +95,7 @@ void Scanner::addToken(TokenType t){
   addToken(t, std::nullopt);
 }
 
-void Scanner::addToken(TokenType t, Literal literal){
+void Scanner::addToken(TokenType t, LiteralVal literal){
   std::string lexeme {source.substr(start, current-start)};
   // std::cout << "Add Token: Start: " << start << " Current: " << current << " Lexeme: " << lexeme << "\n";
   tokens.push_back(Token{t,source.substr(start, current-start), literal, line});

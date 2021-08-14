@@ -21,7 +21,7 @@ struct Scanner {
   char advance();
   void scanToken();
   void addToken(TokenType);
-  void addToken(TokenType, Literal);
+  void addToken(TokenType, LiteralVal);
   bool match(char);
   char peek();
   char peekNext();

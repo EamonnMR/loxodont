@@ -6,13 +6,13 @@
 
 #include "token.hpp"
 
-std::string repr(Literal l){
+std::string repr(LiteralVal l){
   /**
    * Get the string representation of a literal.
    */
   if(l.has_value()){
     std::string litstr;
-    NonNullLiteral val {l.value()};
+    NonNullLiteralVal val {l.value()};
     std::visit([litstr](const auto &elem) mutable {
       std::stringstream str {};
       str << elem;
