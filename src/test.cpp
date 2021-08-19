@@ -4,6 +4,7 @@
 # include "main.hpp"
 # include "scanner.hpp"
 # include "token.hpp"
+# include "expr.hpp"
 # include "gtest/gtest.h"
 # include "string"
 
@@ -35,10 +36,12 @@ TEST(ScannerTest, ScannerScansIdentifiers){
 }
 
 TEST(ScannerTest, ScannerParsesDigits){
-  Scanner scanner {std::string {"12345"} };
+  std::string counting {"12345"};
+  Scanner scanner {counting};
   std::vector<Token> tokens{scanner.scanTokens()};
   ASSERT_EQ(tokens.size(), 2);
   ASSERT_EQ(tokens[0].type, NUMBER);
+  ASSERT_EQ(repr(tokens[0].literal), counting);
 }
 
 TEST(ScannerTest, ScannerParsesStrings){
@@ -46,6 +49,29 @@ TEST(ScannerTest, ScannerParsesStrings){
   std::vector<Token> tokens{scanner.scanTokens()};
   ASSERT_EQ(tokens.size(), 2);
   ASSERT_EQ(tokens[0].type, STRING);
+}
+
+TEST(ASTPrinterTest, ASTPrintsSimpleTree){
+  Scanner scanner {std::string {"123+456"} };
+  std::vector<Token> tk{scanner.scanTokens()};
+  Expr a, b;
+  a = Literal { &tk[0].literal};
+  b = Literal { &tk[2].literal};
+  ASSERT_EQ(
+      repr(*(std::get<Literal>(a).value)),
+      "123"
+  );
+
+  ASSERT_EQ(
+      ASTPrinter().visit(
+        Binary {
+          &a, &tk[1], &b
+        }
+      ),
+      std::string {"(+ 123 456)"}
+  );
+
+  
 }
 
 int main(int argc, char **argv) {
