@@ -1,11 +1,9 @@
 # include <variant>
-# include <string>
-# include <cstdint>
-# include <cstdarg>
 # include <vector>
 # include <string>
 
-# include  "expr.hpp"
+# include "expr.hpp"
+# include "token.hpp"
 
 std::string ASTPrinter::parenthesize(std::string name, std::vector<Expr> exprs ){
   std::string result { "(" + name};
@@ -18,15 +16,15 @@ std::string ASTPrinter::parenthesize(std::string name, std::vector<Expr> exprs )
 }
 
 std::string ASTPrinter::operator()(Binary b){
-  return parenthesize("binary", {});
+  return parenthesize(b.op->lexeme, {*b.left, *b.right});
 }
 
 std::string ASTPrinter::operator()(Grouping g){
-  return parenthesize("bla", {});
+  return parenthesize("group", {*g.expr});
 }
 
 std::string ASTPrinter::operator()(Literal l){
-  return parenthesize("literal", {});
+  return repr(*l.value);
 }
 
 std::string ASTPrinter::operator()(Unary u){
@@ -34,6 +32,6 @@ std::string ASTPrinter::operator()(Unary u){
 }
 
 std::string ASTPrinter::visit(Expr e){
-  return std::visit(e, *this);
+  return std::visit(*this, e);
 }
 

@@ -22,7 +22,7 @@ struct Binary {
 };
 
 struct Grouping {
-  Expr * expression;
+  Expr * expr;
 };
 
 struct Literal {
