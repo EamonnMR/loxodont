@@ -11,13 +11,14 @@ std::string repr(LiteralVal l){
    * Get the string representation of a literal.
    */
   if(l.has_value()){
-    std::string litstr;
+    std::string litstr {""};
     NonNullLiteralVal val {l.value()};
-    std::visit([litstr](const auto &elem) mutable {
+    std::visit([&litstr](const auto &elem) mutable {
       std::stringstream str {};
       str << elem;
-      litstr = str.str(); 
+      litstr += str.str(); 
     }, val);
+
     return litstr;
   } else {
     return std::string {"null"};

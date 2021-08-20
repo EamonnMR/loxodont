@@ -1,12 +1,37 @@
-#import <variant>
+# include <variant>
+# include <vector>
+# include <string>
 
-#import "expr.hpp"
+# include "expr.hpp"
+# include "token.hpp"
 
-void ASTPrinter::operator()(Binary b){}
-void ASTPrinter::operator()(Grouping g){}
-void ASTPrinter::operator()(Literal l){}
-void ASTPrinter::operator()(Unary u){}
-
-void visit_expr(Expr e){
-  std::visit(ASTPrinter{}, e);
+std::string ASTPrinter::parenthesize(std::string name, std::vector<Expr> exprs ){
+  std::string result { "(" + name};
+  for(Expr arg : exprs){
+    result += " ";
+    result += visit(arg);
+  }
+  result += ")";
+  return result;
 }
+
+std::string ASTPrinter::operator()(Binary b){
+  return parenthesize(b.op->lexeme, {*b.left, *b.right});
+}
+
+std::string ASTPrinter::operator()(Grouping g){
+  return parenthesize("group", {*g.expr});
+}
+
+std::string ASTPrinter::operator()(Literal l){
+  return repr(*l.value);
+}
+
+std::string ASTPrinter::operator()(Unary u){
+  return parenthesize(u.op->lexeme, {*u.right});
+}
+
+std::string ASTPrinter::visit(Expr e){
+  return std::visit(*this, e);
+}
+

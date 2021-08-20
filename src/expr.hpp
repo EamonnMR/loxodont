@@ -1,6 +1,7 @@
 # pragma once
 
 #include <variant>
+#include <string>
 #include "token.hpp"
 struct Binary;
 struct Grouping;
@@ -21,7 +22,7 @@ struct Binary {
 };
 
 struct Grouping {
-  Expr * expression;
+  Expr * expr;
 };
 
 struct Literal {
@@ -30,12 +31,15 @@ struct Literal {
 
 struct Unary {
   Token* op;
-  Expr* left; 
+  Expr* right; 
 };
 
 struct ASTPrinter{
-  void operator()(Binary);
-  void operator()(Grouping);
-  void operator()(Literal);
-  void operator()(Unary);
+  std::string operator()(Binary);
+  std::string operator()(Grouping);
+  std::string operator()(Literal);
+  std::string operator()(Unary);
+  std::string parenthesize(std::string, std::vector<Expr>);
+  std::string visit(Expr);
 };
+
