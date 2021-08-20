@@ -8,6 +8,10 @@
 # include "gtest/gtest.h"
 # include "string"
 
+TEST(LiteralValTest, ReprHandlesNumbere){
+  ASSERT_EQ("123", repr(LiteralVal {123}));
+}
+
 TEST(ScannerTest, ScannerAddsEOFToken){
   Scanner scanner {std::string {""} };
   std::vector<Token> tokens{scanner.scanTokens()};

@@ -8,8 +8,8 @@
 std::string ASTPrinter::parenthesize(std::string name, std::vector<Expr> exprs ){
   std::string result { "(" + name};
   for(Expr arg : exprs){
-    result += visit(arg);
     result += " ";
+    result += visit(arg);
   }
   result += ")";
   return result;
