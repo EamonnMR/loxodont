@@ -17,6 +17,10 @@ struct Parser {
   Expr expression();
   Expr equality();
   Expr comparison();
+  Expr term();
+  Expr factor();
+  Expr unary();
+  Expr primary();
 
   // Utility
   bool match(std::vector<TokenType>);

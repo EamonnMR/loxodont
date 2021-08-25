@@ -10,6 +10,9 @@ Parser::Parser(std::vector<Token> tokens){
   heapToken = std::vector<Token*>{};
 }
 
+/*
+ * Grammar rules
+ */
 
 Expr Parser::expression(){
   return equality();
@@ -24,6 +27,72 @@ Expr Parser::equality(){
   }
   return expr;
 }
+
+Expr Parser::comparison(){
+  Expr expr { term() };
+  while(match({
+        GREATER,
+        GREATER_EQUAL,
+        LESS,
+        LESS_EQUAL
+  })){
+    Token op { previous() };
+    Expr right { term() };
+    expr = Binary{alloc(expr), alloc(op), alloc(right)};
+  }
+  return expr;
+}
+
+Expr Parser::term() {
+  Expr expr { factor() };
+
+  while (match({MINUS, PLUS})){
+    Token op { previous() };
+    Expr right { factor() };
+    expr = Binary{alloc(expr), alloc(op), alloc(right)};
+  }
+  return expr;
+}
+
+Expr Parser::factor() {
+  Expr expr { unary() };
+  while (match({ SLASH, STAR })){
+    Token op = previous();
+    Expr right = unary();
+    expr = Binary {alloc(expr), alloc(op), alloc(right)};
+  }
+  return expr;
+}
+
+Expr Parser::unary(){
+  if(match({ BANG, MINUS })){
+    Token op { previous() };
+    Expr right { unary() };
+    return Unary{alloc(op), alloc(right)};
+  }
+
+  return primary();
+}
+
+Expr Parser::primary() {
+  if (match({TRUE})) return Literal {true};
+  if (match({FALSE})) return Literal {false};
+  if (match({NIL})) return Literal {}; // TODO: option?
+
+  if (match({NUMBER, STRING})) {
+    return Literal { previous.literal };
+  }
+
+  // TODO
+  /*
+  if (match({LEFT_PAREN})){
+    Expr expr { expression() };
+    consume(RIGHT_PAREN, "Expect ')' after expression");
+    return Grouping { expr };
+  */
+/*
+ * Utilities
+ */
 
 bool Parser::match(std::vector<TokenType> types){
   for( auto type : types){
@@ -57,8 +126,11 @@ Token Parser::previous(){
   return tokens[current - 1];
 }
 
-/* Manual memory mgmt
+/* 
+ * Manual memory mgmt (not in the book)
  * Note that these are deleted in the destructor
+ * Convention is to allocate only when adding to a tree
+ * otherwise these types are passed by value
  */
 // Todo: Malloc more sparingly
 
