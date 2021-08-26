@@ -1,6 +1,19 @@
 # import <vector>
+# import <optional>
+# import <iostream>
+
 # import "token.hpp"
 # import "parser.hpp"
+
+LiteralVal LIT_TRUE {true};
+LiteralVal LIT_FALSE {false};
+LiteralVal LIT_NIL {std::nullopt};
+
+LiteralVal * LIT_TRUE_PTR {&LIT_TRUE};
+LiteralVal * LIT_FALSE_PTR {&LIT_FALSE};
+LiteralVal * LIT_NIL_PTR {&LIT_FALSE};
+
+
 
 Parser::Parser(std::vector<Token> tokens){
   current = 0;
@@ -8,6 +21,7 @@ Parser::Parser(std::vector<Token> tokens){
   // TODO: Heap of variants maybe?
   heapExpr = std::vector<Expr*>{};
   heapToken = std::vector<Token*>{};
+  heapLiteral = std::vector<LiteralVal*>{};
 }
 
 /*
@@ -75,12 +89,12 @@ Expr Parser::unary(){
 }
 
 Expr Parser::primary() {
-  if (match({TRUE})) return Literal {true};
-  if (match({FALSE})) return Literal {false};
-  if (match({NIL})) return Literal {}; // TODO: option?
+  if (match({TRUE})) return Literal {LIT_TRUE_PTR};
+  if (match({FALSE})) return Literal {LIT_FALSE_PTR};
+  if (match({NIL})) return Literal {LIT_NIL_PTR};
 
   if (match({NUMBER, STRING})) {
-    return Literal { previous.literal };
+    return Literal { alloc(previous().literal) };
   }
 
   // TODO
@@ -89,7 +103,12 @@ Expr Parser::primary() {
     Expr expr { expression() };
     consume(RIGHT_PAREN, "Expect ')' after expression");
     return Grouping { expr };
+  }
   */
+  std::cout << "Error";
+  return Literal {LIT_NIL_PTR};
+}
+
 /*
  * Utilities
  */
@@ -146,6 +165,12 @@ Token* Parser::alloc(Token token){
   return tkn;
 }
 
+LiteralVal* Parser::alloc(LiteralVal literal){
+  LiteralVal* lit = new LiteralVal{literal};
+  heapLiteral.push_back(lit);
+  return lit;
+}
+
 Parser::~Parser(){
   for(auto expr : heapExpr){
     delete expr;
@@ -153,5 +178,9 @@ Parser::~Parser(){
   for(auto token : heapToken){
     delete token;
   }
+  for(auto literal : heapLiteral){
+    delete literal;
+  }
+
 }
 

@@ -9,6 +9,7 @@ struct Parser {
   // Parser-allocated memory
   std::vector<Expr*> heapExpr;
   std::vector<Token*> heapToken;
+  std::vector<LiteralVal*> heapLiteral;
   size_t current;
 
   Parser(std::vector<Token>);
@@ -33,4 +34,5 @@ struct Parser {
   // Utility (Not in the book)
   Expr * alloc(Expr);
   Token * alloc(Token);
+  LiteralVal * alloc(LiteralVal);
 };
