@@ -97,15 +97,16 @@ Expr Parser::primary() {
     return Literal { alloc(previous().literal) };
   }
 
-  // TODO
-  /*
   if (match({LEFT_PAREN})){
     Expr expr { expression() };
     consume(RIGHT_PAREN, "Expect ')' after expression");
-    return Grouping { expr };
+    return Grouping { alloc(expr) };
   }
-  */
-  std::cout << "Error";
+
+  // Should not reach this.
+  // I'm not sure what the book is playing at,
+  // not returning anything at the end.
+  std::cout << "Error - unparsable code";
   return Literal {LIT_NIL_PTR};
 }
 
@@ -145,6 +146,13 @@ Token Parser::previous(){
   return tokens[current - 1];
 }
 
+Token Parser::consume(TokenType type, std::string message){
+  if (check( type )) return advance();
+  else throw ParseError {peek(), message};
+}
+
+
+
 /* 
  * Manual memory mgmt (not in the book)
  * Note that these are deleted in the destructor
@@ -181,6 +189,5 @@ Parser::~Parser(){
   for(auto literal : heapLiteral){
     delete literal;
   }
-
 }
 

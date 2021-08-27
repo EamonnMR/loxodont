@@ -1,8 +1,15 @@
 # pragma once
 
+# include <vector>
+# include <stdexcept>
+
 # include "token.hpp"
 # include "expr.hpp"
-# include <vector>
+
+struct ParseError : std::runtime_exception {
+  Token offender;
+  String message;
+}
 
 struct Parser {
   std::vector<Token> tokens;  // Input
@@ -30,6 +37,7 @@ struct Parser {
   bool isAtEnd();
   Token peek();
   Token previous();
+  Token consume(TokenType, std::string);
 
   // Utility (Not in the book)
   Expr * alloc(Expr);
