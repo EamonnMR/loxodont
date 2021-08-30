@@ -35,6 +35,7 @@ struct Parser {
   Token previous();
   Token consume(TokenType, std::string);
   std::runtime_error parseError(Token, std::string);
+  void synchronize();
 
   // Utility (Not in the book)
   Expr * alloc(Expr);

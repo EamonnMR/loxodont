@@ -15,7 +15,6 @@ LiteralVal * LIT_FALSE_PTR {&LIT_FALSE};
 LiteralVal * LIT_NIL_PTR {&LIT_FALSE};
 
 
-
 Parser::Parser(std::vector<Token> tokens){
   current = 0;
   this->tokens = tokens;
@@ -157,6 +156,27 @@ std::runtime_error Parser::parseError(Token token, std::string message){
   return std::runtime_error {message};
 }
 
+void Parser::synchronize(){
+  advance();
+  while( !isAtEnd() ){
+    if( previous().type == SEMICOLON ) return;
+
+    // I'm not sold on this fallthrough construction
+    switch (peek().type) {
+      case KW_CLASS:
+      case FUN:
+      case VAR:
+      case KW_FOR:
+      case KW_IF:
+      case WHILE:
+      case PRINT:
+      case RETURN:
+        return;
+      default: ;
+    }
+    advance();
+  }
+}
 
 /* 
  * Manual memory mgmt (not in the book)
