@@ -17,6 +17,14 @@ void report(size_t line, std::string where, std::string message){
   hadError = true;
 }
 
+void error(Token token, std::string message){
+  if (token.type == KW_EOF){
+    report(token.line, " at end", message);
+  } else {
+    report(token.line, " at '" + token.lexeme + "'", message);
+  }
+}
+
 void error(size_t line, std::string message){
   report(line, std::string{""}, message);
 }

@@ -5,11 +5,7 @@
 
 # include "token.hpp"
 # include "expr.hpp"
-
-struct ParseError : std::runtime_exception {
-  Token offender;
-  String message;
-}
+# include "main.hpp"
 
 struct Parser {
   std::vector<Token> tokens;  // Input
@@ -38,6 +34,7 @@ struct Parser {
   Token peek();
   Token previous();
   Token consume(TokenType, std::string);
+  std::runtime_error parseError(Token, std::string);
 
   // Utility (Not in the book)
   Expr * alloc(Expr);

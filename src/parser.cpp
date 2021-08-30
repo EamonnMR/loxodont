@@ -1,9 +1,10 @@
-# import <vector>
-# import <optional>
-# import <iostream>
+# include <vector>
+# include <optional>
+# include <iostream>
+# include <stdexcept>
 
-# import "token.hpp"
-# import "parser.hpp"
+# include "token.hpp"
+# include "parser.hpp"
 
 LiteralVal LIT_TRUE {true};
 LiteralVal LIT_FALSE {false};
@@ -148,9 +149,13 @@ Token Parser::previous(){
 
 Token Parser::consume(TokenType type, std::string message){
   if (check( type )) return advance();
-  else throw ParseError {peek(), message};
+  else throw parseError(peek(), message);
 }
 
+std::runtime_error Parser::parseError(Token token, std::string message){
+  error(token.line, message);
+  return std::runtime_error {message};
+}
 
 
 /* 
