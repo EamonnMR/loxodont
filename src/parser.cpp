@@ -102,12 +102,8 @@ Expr Parser::primary() {
     consume(RIGHT_PAREN, "Expect ')' after expression");
     return Grouping { alloc(expr) };
   }
-
-  // Should not reach this.
-  // I'm not sure what the book is playing at,
-  // not returning anything at the end.
-  std::cout << "Error - unparsable code";
-  return Literal {LIT_NIL_PTR};
+  
+  throw parseError(peek(), "Expected Expression");
 }
 
 /*
