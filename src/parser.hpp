@@ -17,6 +17,7 @@ struct Parser {
 
   Parser(std::vector<Token>);
   ~Parser();
+  Expr parse();
   // Grammar Rules
   Expr expression();
   Expr equality();

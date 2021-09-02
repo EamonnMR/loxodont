@@ -24,6 +24,14 @@ Parser::Parser(std::vector<Token> tokens){
   heapLiteral = std::vector<LiteralVal*>{};
 }
 
+Expr Parser::parse(){
+  try {
+    return expression();
+  } catch (std::runtime_error ex){
+    return Expr {};
+  }
+}
+
 /*
  * Grammar rules
  */

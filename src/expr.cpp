@@ -31,6 +31,10 @@ std::string ASTPrinter::operator()(Unary u){
   return parenthesize(u.op->lexeme, {*u.right});
 }
 
+std::string ASTPrinter::operator()(std::monostate nil){
+  return "nilexpr";
+}
+
 std::string ASTPrinter::visit(Expr e){
   return std::visit(*this, e);
 }
