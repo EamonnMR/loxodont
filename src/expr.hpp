@@ -9,6 +9,7 @@ struct Literal;
 struct Unary;
 
 typedef std::variant<
+  std::monostate,
   Binary,
   Grouping,
   Literal,
@@ -39,6 +40,7 @@ struct ASTPrinter{
   std::string operator()(Grouping);
   std::string operator()(Literal);
   std::string operator()(Unary);
+  std::string operator()(std::monostate);
   std::string parenthesize(std::string, std::vector<Expr>);
   std::string visit(Expr);
 };

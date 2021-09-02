@@ -8,6 +8,8 @@
 
 #include "token.hpp"
 #include "scanner.hpp"
+#include "expr.hpp"
+#include "parser.hpp"
 #include "main.hpp"
 
 bool hadError {false};
@@ -17,6 +19,14 @@ void report(size_t line, std::string where, std::string message){
   hadError = true;
 }
 
+void error(Token token, std::string message){
+  if (token.type == KW_EOF){
+    report(token.line, " at end", message);
+  } else {
+    report(token.line, " at '" + token.lexeme + "'", message);
+  }
+}
+
 void error(size_t line, std::string message){
   report(line, std::string{""}, message);
 }
@@ -24,10 +34,8 @@ void error(size_t line, std::string message){
 void run(std::string source){
   Scanner scanner {source};
   std::vector<Token> tokens{scanner.scanTokens()};
-  for (Token token : tokens){
-    std::cout << token.toString();
-    std::cout << "\n";
-  }
+  Parser parser {tokens};
+  std::cout << ASTPrinter().visit( parser.parse() ) << "\n";
 }
 
 void runFile(char* filename){
