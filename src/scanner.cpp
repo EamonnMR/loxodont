@@ -18,7 +18,6 @@ Scanner::Scanner(std::string src){
 }
 
 std::vector<Token> Scanner::scanTokens(){
-  std::cout << "ScanTokens" << "\n";
   while(!isAtEnd()){
     start = current;
     scanToken();
