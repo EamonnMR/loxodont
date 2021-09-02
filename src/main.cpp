@@ -8,6 +8,8 @@
 
 #include "token.hpp"
 #include "scanner.hpp"
+#include "expr.hpp"
+#include "parser.hpp"
 #include "main.hpp"
 
 bool hadError {false};
@@ -32,10 +34,8 @@ void error(size_t line, std::string message){
 void run(std::string source){
   Scanner scanner {source};
   std::vector<Token> tokens{scanner.scanTokens()};
-  for (Token token : tokens){
-    std::cout << token.toString();
-    std::cout << "\n";
-  }
+  Parser parser {tokens};
+  std::cout << ASTPrinter().visit( parser.parse() ) << "\n";
 }
 
 void runFile(char* filename){
