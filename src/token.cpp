@@ -1,28 +1,28 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <array>
-#include <vector>
+#include <variant>
+#include <typeinfo>
 
 #include "token.hpp"
 
-std::string repr(LiteralVal l){
+std::ostream& operator<<(std::ostream& os, const NullVal& dt){
+  os << "Nil";
+  return os;
+}
+
+std::string repr(LiteralVal val){
   /**
    * Get the string representation of a literal.
    */
-  if(l.has_value()){
-    std::string litstr {""};
-    NonNullLiteralVal val {l.value()};
-    std::visit([&litstr](const auto &elem) mutable {
-      std::stringstream str {};
-      str << elem;
-      litstr += str.str(); 
-    }, val);
+  std::string litstr {""};
+  std::visit([&litstr](const auto &elem) mutable {
+    std::stringstream str {};
+    str << elem;
+    litstr += str.str(); 
+}, val);
 
-    return litstr;
-  } else {
-    return std::string {"null"};
-  }
+  return litstr;
 }
 
 

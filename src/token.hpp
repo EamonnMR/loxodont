@@ -5,9 +5,13 @@
 #include <variant>
 #include <optional>
 
-typedef std::variant<bool, int64_t, long double, std::string> NonNullLiteralVal;
+struct NullVal : std::monostate {
+};
 
-typedef std::optional<NonNullLiteralVal> LiteralVal;
+std::ostream& operator<<(std::ostream&, const NullVal&);
+
+typedef std::variant<NullVal, bool, int64_t, long double, std::string> LiteralVal;
+
 
 std::string repr(LiteralVal);
 

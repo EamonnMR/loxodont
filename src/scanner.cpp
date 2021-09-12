@@ -22,7 +22,7 @@ std::vector<Token> Scanner::scanTokens(){
     start = current;
     scanToken();
   }
-  tokens.push_back(Token{KW_EOF, std::string{}, std::nullopt, line});
+  tokens.push_back(Token{KW_EOF, std::string{}, LiteralVal{}, line});
   return tokens;
 }
 
@@ -91,7 +91,7 @@ void Scanner::scanToken(){
 }
 
 void Scanner::addToken(TokenType t){
-  addToken(t, std::nullopt);
+  addToken(t, LiteralVal{});
 }
 
 void Scanner::addToken(TokenType t, LiteralVal literal){

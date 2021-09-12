@@ -8,7 +8,7 @@
 
 LiteralVal LIT_TRUE {true};
 LiteralVal LIT_FALSE {false};
-LiteralVal LIT_NIL {std::nullopt};
+LiteralVal LIT_NIL {};
 
 LiteralVal * LIT_TRUE_PTR {&LIT_TRUE};
 LiteralVal * LIT_FALSE_PTR {&LIT_FALSE};

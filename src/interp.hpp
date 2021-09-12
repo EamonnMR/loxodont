@@ -1,9 +1,18 @@
-struct Interpreter{
-  std::string operator()(Binary);
-  std::string operator()(Grouping);
-  std::string operator()(Literal);
-  std::string operator()(Unary);
-  std::string operator()(std::monostate);
-  std::string visit(Expr);
+# pragma once
+
+# include <string>
+# include <variant>
+
+# include "token.hpp"
+
+struct Interpreter {
+  LiteralVal operator()(Binary);
+  LiteralVal operator()(Grouping);
+  LiteralVal operator()(Literal);
+  LiteralVal operator()(Unary);
+  LiteralVal operator()(std::monostate);
+  LiteralVal eval(Expr);
+  bool isTruthy(LiteralVal);
+  long double numCast(LiteralVal);
 };
 
