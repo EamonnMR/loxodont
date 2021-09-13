@@ -55,6 +55,15 @@ LiteralVal Interpreter::operator()(Binary b){
     case STAR:
       return numCast(l) * numCast(r);
 
+    case GREATER:
+      return numCast(l) > numCast(r);
+    case GREATER_EQUAL:
+      return numCast(l) >= numCast(r);
+    case LESS:
+      return numCast(l) < numCast(r);
+    case LESS_EQUAL:
+      return numCast(l) <= numCast(r);
+
   }
   return LiteralVal{};
 }
