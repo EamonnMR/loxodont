@@ -14,5 +14,6 @@ struct Interpreter {
   LiteralVal eval(Expr);
   bool isTruthy(LiteralVal);
   long double numCast(LiteralVal);
+  std::string strCast(LiteralVal);
 };
 

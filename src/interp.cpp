@@ -36,6 +36,20 @@ LiteralVal Interpreter::operator()(Binary b){
   switch(b.op->type){
     case MINUS:
       return numCast(l) - numCast(r);
+    case PLUS:
+      if(
+        std::holds_alternative<long double>(l)
+        && std::holds_alternative<long double>(r)
+      ){
+        return numCast(l) + numCast(r);
+      }
+      if(
+        std::holds_alternative<long double>(l)
+        && std::holds_alternative<long double>(r)
+      ){
+        return strCast(l) + strCast(r);
+      }
+      break;
     case SLASH:
       return numCast(l) / numCast(r);
     case STAR:
@@ -60,6 +74,9 @@ bool Interpreter::isTruthy(LiteralVal l){
 }
 
 long double Interpreter::numCast(LiteralVal lv){
-  return 1;
   return std::get<long double>(lv);
+}
+
+std::string Interpreter::strCast(LiteralVal sv){
+  return std::get<std::string>(sv);
 }
