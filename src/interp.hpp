@@ -13,6 +13,7 @@ struct Interpreter {
   LiteralVal operator()(std::monostate);
   LiteralVal eval(Expr);
   bool isTruthy(LiteralVal);
+  bool isEqual(LiteralVal, LiteralVal);
   long double numCast(LiteralVal);
   std::string strCast(LiteralVal);
 };

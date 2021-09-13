@@ -64,6 +64,12 @@ LiteralVal Interpreter::operator()(Binary b){
     case LESS_EQUAL:
       return numCast(l) <= numCast(r);
 
+    case EQUAL_EQUAL:
+      return isEqual(l, r);
+    case BANG_EQUAL:
+      return !isEqual(l, r);
+
+
   }
   return LiteralVal{};
 }
@@ -88,4 +94,33 @@ long double Interpreter::numCast(LiteralVal lv){
 
 std::string Interpreter::strCast(LiteralVal sv){
   return std::get<std::string>(sv);
+}
+
+bool Interpreter::isEqual(LiteralVal l, LiteralVal r){
+  if(
+    std::holds_alternative<NullVal>(l)
+    && std::holds_alternative<NullVal>(r)
+  ){
+    return true;
+  } else if (
+      std::holds_alternative<NullVal>(l)
+      || std::holds_alternative<NullVal>(r)
+  ){
+    return false;
+  }
+  // TODO: Return error if l.index() != r.index()
+  // TODO: Is there a more elegant way to do this?
+  if(std::holds_alternative<bool>(l)){
+    return std::get<bool>(l) == std::get<bool>(r);
+  }
+  if(std::holds_alternative<long double>(l)){
+    return numCast(l) == numCast(r);
+  }
+  if(std::holds_alternative<std::string>(l)){
+    return strCast(l) == strCast(r);
+  }
+
+  //TODO: Handle more cases
+  return false;
+
 }
