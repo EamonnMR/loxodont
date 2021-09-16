@@ -3,6 +3,7 @@
 # include "token.hpp"
 # include "expr.hpp"
 # include "interp.hpp"
+# include "main.hpp"
 
 LiteralVal Interpreter::eval(Expr e){
   return std::visit(*this, e);
@@ -124,3 +125,15 @@ bool Interpreter::isEqual(LiteralVal l, LiteralVal r){
   return false;
 
 }
+
+void Interpreter::checkNumOperands(Token op, std::vector<LiteralVal> nums){
+  for(LiteralVal l : nums){
+    if(!std::holds_alternative<long double>(l)){
+      throw LoxRuntimeError {
+        op,
+        "Operator requires numerics"
+      };
+    }
+  }
+}
+
