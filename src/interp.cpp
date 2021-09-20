@@ -1,9 +1,18 @@
 # include <variant>
+# include <iostream>
 
 # include "token.hpp"
 # include "expr.hpp"
 # include "interp.hpp"
 # include "main.hpp"
+
+void Interpreter::interpret(Expr e){
+  try {
+    std::cout << repr( eval(e) ) << "\n";
+  } catch (LoxRuntimeError e) {
+    error(e.token.line, e.message);
+  }
+}
 
 LiteralVal Interpreter::eval(Expr e){
   return std::visit(*this, e);
@@ -19,12 +28,14 @@ LiteralVal Interpreter::operator()(Grouping g){
 
 LiteralVal Interpreter::operator()(Unary u){
   Expr right = *u.right;
+  LiteralVal r { eval(right) };
   switch (u.op->type){
     case BANG:
-      return ! isTruthy(eval(right));
+      return ! isTruthy(r);
     case MINUS:
+      checkNumOperands(*u.op, {r});
       // TODO: What about ints?
-      return -1 * numCast(eval(right));
+      return -1 * numCast(r);
   }
   // TODO: make Unreachable
   return LiteralVal{};
@@ -36,6 +47,7 @@ LiteralVal Interpreter::operator()(Binary b){
 
   switch(b.op->type){
     case MINUS:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) - numCast(r);
     case PLUS:
       if(
@@ -50,19 +62,28 @@ LiteralVal Interpreter::operator()(Binary b){
       ){
         return strCast(l) + strCast(r);
       }
-      break;
+      throw LoxRuntimeError {
+        *b.op,
+        "Operand types must match (string + string or num + num)"
+      };
     case SLASH:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) / numCast(r);
     case STAR:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) * numCast(r);
 
     case GREATER:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) > numCast(r);
     case GREATER_EQUAL:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) >= numCast(r);
     case LESS:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) < numCast(r);
     case LESS_EQUAL:
+      checkNumOperands(*b.op, {l, r});
       return numCast(l) <= numCast(r);
 
     case EQUAL_EQUAL:

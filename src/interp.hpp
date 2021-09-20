@@ -7,6 +7,9 @@
 # include "token.hpp"
 
 struct Interpreter {
+
+  void interpret(Expr);
+
   LiteralVal operator()(Binary);
   LiteralVal operator()(Grouping);
   LiteralVal operator()(Literal);
