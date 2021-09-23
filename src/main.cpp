@@ -55,7 +55,7 @@ void runPrompt(){
     char* input_raw {readline("loxodont> ")};
     add_history(input_raw);
     std::string input {input_raw};
-    std::cout << input;
+    // std::cout << input << "\n";
     run(input);
   }
 }
