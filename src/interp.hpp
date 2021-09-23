@@ -27,11 +27,10 @@ struct Interpreter {
 
 };
 
-LoxRuntimeError::LoxRuntimeError(Token token, std::string message) : std::runtime_error(message){
-  this->token = token;
-  this->message = message;
+struct LoxRuntimeError : public std::runtime_error {
+  Token token;
+  std::string message;
+  LoxRuntimeError(Token, std::string);
+  const char* what() const noexcept;
 };
 
-const char* LoxRuntimeError::what() const noexcept{
-  return message.c_str();
-}

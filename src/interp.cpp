@@ -158,3 +158,12 @@ void Interpreter::checkNumOperands(Token op, std::vector<LiteralVal> nums){
   }
 }
 
+LoxRuntimeError::LoxRuntimeError(Token token, std::string message) : std::runtime_error(message){
+  this->token = token;
+  this->message = message;
+}
+
+const char* LoxRuntimeError::what() const noexcept{
+  return message.c_str();
+}
+

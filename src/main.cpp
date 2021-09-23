@@ -10,6 +10,7 @@
 #include "scanner.hpp"
 #include "expr.hpp"
 #include "parser.hpp"
+#include "interp.hpp"
 #include "main.hpp"
 
 bool hadError {false};
@@ -33,9 +34,11 @@ void error(size_t line, std::string message){
 
 void run(std::string source){
   Scanner scanner {source};
+  Interpreter interpreter {};
   std::vector<Token> tokens{scanner.scanTokens()};
   Parser parser {tokens};
-  std::cout << ASTPrinter().visit( parser.parse() ) << "\n";
+  // std::cout << ASTPrinter().visit( parser.parse() ) << "\n";
+  interpreter.interpret(parser.parse());
 }
 
 void runFile(char* filename){

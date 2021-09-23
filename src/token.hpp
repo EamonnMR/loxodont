@@ -65,10 +65,3 @@ struct Token {
   // TODO: Constructor
 };
 
-struct LoxRuntimeError : public std::runtime_error {
-  Token token;
-  std::string message;
-  LoxRuntimeError(Token, std::string);
-  const char* what() const noexcept;
-};
-
