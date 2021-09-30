@@ -6,15 +6,21 @@
 # include "interp.hpp"
 # include "main.hpp"
 
-void Interpreter::interpret(Expr e){
+void Interpreter::interpret(std::vector<Stmt> stmts){
   try {
-    std::cout << repr( eval(e) ) << "\n";
+    for (Stmt stmt: stmts){
+      eval(stmt);
+    }
   } catch (LoxRuntimeError e) {
     error(e.token.line, e.message);
   }
 }
 
 LiteralVal Interpreter::eval(Expr e){
+  return std::visit(*this, e);
+}
+
+void Interpreter::eval(Stmt e){
   return std::visit(*this, e);
 }
 
@@ -145,6 +151,15 @@ bool Interpreter::isEqual(LiteralVal l, LiteralVal r){
   //TODO: Handle more cases
   return false;
 
+}
+
+void Interpreter::operator()(ExpressionStmt stmt){
+  eval(stmt.expr);
+}
+
+void Interpreter::operator()(PrintStmt stmt){
+  // std::cout << ASTPrinter().visit(eval(stmt.expr));
+  std::cout << repr(eval(stmt.expr));
 }
 
 void Interpreter::checkNumOperands(Token op, std::vector<LiteralVal> nums){

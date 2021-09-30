@@ -6,6 +6,7 @@
 # include "token.hpp"
 # include "expr.hpp"
 # include "main.hpp"
+# include "stmt.hpp"
 
 struct Parser {
   std::vector<Token> tokens;  // Input
@@ -17,8 +18,12 @@ struct Parser {
 
   Parser(std::vector<Token>);
   ~Parser();
-  Expr parse();
+  std::vector<Stmt> parse();
   // Grammar Rules
+  Stmt statement();
+  Stmt printStmt();
+  Stmt expressionStmt();
+
   Expr expression();
   Expr equality();
   Expr comparison();

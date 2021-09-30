@@ -24,12 +24,13 @@ Parser::Parser(std::vector<Token> tokens){
   heapLiteral = std::vector<LiteralVal*>{};
 }
 
-Expr Parser::parse(){
-  try {
-    return expression();
-  } catch (std::runtime_error ex){
-    return Expr {};
+std::vector<Stmt> Parser::parse(){
+  std::vector<Stmt> stmts {};
+  while(!isAtEnd()){
+    stmts.push_back(statement());
   }
+
+  return stmts;
 }
 
 /*
@@ -112,6 +113,24 @@ Expr Parser::primary() {
   }
   
   throw parseError(peek(), "Expected Expression");
+}
+
+Stmt Parser::statement (){
+  if(match({PRINT})) return printStmt();
+
+  return expressionStmt() ;
+}
+
+Stmt Parser::printStmt(){
+  Expr value = expression();
+  consume(SEMICOLON, "Expected semicolon at end of print");
+  return PrintStmt {value};
+}
+
+Stmt Parser::expressionStmt(){
+  Expr expr = expression();
+  consume(SEMICOLON, "Expected ';' at end of expr");
+  return ExpressionStmt {expr};
 }
 
 /*

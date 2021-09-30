@@ -5,10 +5,12 @@
 # include <vector>
 
 # include "token.hpp"
+# include "expr.hpp"
+# include "stmt.hpp"
 
 struct Interpreter {
 
-  void interpret(Expr);
+  void interpret(std::vector<Stmt>);
 
   LiteralVal operator()(Binary);
   LiteralVal operator()(Grouping);
@@ -17,6 +19,10 @@ struct Interpreter {
   LiteralVal operator()(std::monostate);
 
   LiteralVal eval(Expr);
+  void operator()(PrintStmt);
+  void operator()(ExpressionStmt);
+  
+  void eval(Stmt);
 
   bool isTruthy(LiteralVal);
   bool isEqual(LiteralVal, LiteralVal);
