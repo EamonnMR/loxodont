@@ -159,7 +159,7 @@ void Interpreter::operator()(ExpressionStmt stmt){
 
 void Interpreter::operator()(PrintStmt stmt){
   // std::cout << ASTPrinter().visit(eval(stmt.expr));
-  std::cout << repr(eval(stmt.expr));
+  std::cout << repr(eval(stmt.expr)) << "\n";
 }
 
 void Interpreter::checkNumOperands(Token op, std::vector<LiteralVal> nums){

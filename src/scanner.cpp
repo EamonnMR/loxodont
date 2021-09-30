@@ -142,9 +142,10 @@ void Scanner::scanString(){
     advance();
   }
   advance();
-  std::cout << "Scanned String, start: " << start + 1 << " end: " << current - 1 << " length " << current-(start + 1) << "\n";
   // Exclude quotation marks from the string literal
-  addToken(STRING, source.substr(start + 2, current - (start + 1)));
+  size_t str_start { start + 1 };
+  size_t str_len { current - (start + 2) };
+  addToken(STRING, source.substr(str_start, str_len));
 }
 
 

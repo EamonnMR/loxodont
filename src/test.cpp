@@ -49,10 +49,15 @@ TEST(ScannerTest, ScannerParsesDigits){
 }
 
 TEST(ScannerTest, ScannerParsesStrings){
-  Scanner scanner {std::string {"\"String With Spaces\""} };
+  std::string str {"String With Spaces"};
+  std::string quote {"\""};
+  Scanner scanner {quote + str + quote};
   std::vector<Token> tokens{scanner.scanTokens()};
   ASSERT_EQ(tokens.size(), 2);
   ASSERT_EQ(tokens[0].type, STRING);
+  LiteralVal lit = tokens[0].literal;
+  ASSERT_TRUE(std::holds_alternative<std::string>(lit));
+  ASSERT_EQ(std::get<std::string>(lit), str);
 }
 
 TEST(ASTPrinterTest, ASTPrintsSimpleTree){
