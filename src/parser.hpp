@@ -23,6 +23,9 @@ struct Parser {
   Stmt statement();
   Stmt printStmt();
   Stmt expressionStmt();
+  Stmt declaration();
+  Stmt varDeclaration();
+  Stmt emptyStmt(); // Also not in the book, = Null
 
   Expr expression();
   Expr equality();

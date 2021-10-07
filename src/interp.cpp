@@ -32,6 +32,11 @@ LiteralVal Interpreter::operator()(Grouping g){
   return eval(*g.expr);
 }
 
+LiteralVal Interpreter::operator()(Variable v){
+  // TODO: Variable
+  return LiteralVal {};
+}
+
 LiteralVal Interpreter::operator()(Unary u){
   Expr right = *u.right;
   LiteralVal r { eval(right) };

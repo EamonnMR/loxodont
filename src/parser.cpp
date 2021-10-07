@@ -27,7 +27,7 @@ Parser::Parser(std::vector<Token> tokens){
 std::vector<Stmt> Parser::parse(){
   std::vector<Stmt> stmts {};
   while(!isAtEnd()){
-    stmts.push_back(statement());
+    stmts.push_back(declaration());
   }
 
   return stmts;
@@ -115,10 +115,20 @@ Expr Parser::primary() {
   throw parseError(peek(), "Expected Expression");
 }
 
+Stmt Parser::declaration(){
+  try {
+    if( match({VAR})) return varDeclaration();
+    return statement();
+  } catch (std::runtime_error) {
+    synchronize();
+    return emptyStmt();
+  }
+}
+
 Stmt Parser::statement (){
   if(match({PRINT})) return printStmt();
 
-  return expressionStmt() ;
+  return expressionStmt();
 }
 
 Stmt Parser::printStmt(){
@@ -131,6 +141,20 @@ Stmt Parser::expressionStmt(){
   Expr expr = expression();
   consume(SEMICOLON, "Expected ';' at end of expr");
   return ExpressionStmt {expr};
+}
+
+Stmt Parser::varDeclaration(){
+}
+
+
+Stmt Parser::emptyStmt(){
+  // This is close enough to a null expr...
+  // Can't overload two different monostates on the
+  // interpreter class!
+  // TODO: If this is a pain, inherit from monostate
+  // make a NullStmt class and use that instead.
+  ExpressionStmt empty {Expr {}};
+  return empty;
 }
 
 /*

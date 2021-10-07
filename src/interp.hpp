@@ -16,11 +16,13 @@ struct Interpreter {
   LiteralVal operator()(Grouping);
   LiteralVal operator()(Literal);
   LiteralVal operator()(Unary);
+  LiteralVal operator()(Variable);
   LiteralVal operator()(std::monostate);
 
   LiteralVal eval(Expr);
   void operator()(PrintStmt);
   void operator()(ExpressionStmt);
+  void operator()(VarStmt);
   
   void eval(Stmt);
 

@@ -35,6 +35,10 @@ std::string ASTPrinter::operator()(std::monostate nil){
   return "nilexpr";
 }
 
+std::string ASTPrinter::operator()(Variable v){
+  return v.name.toString();
+}
+
 std::string ASTPrinter::visit(Expr e){
   return std::visit(*this, e);
 }
