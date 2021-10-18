@@ -106,6 +106,10 @@ Expr Parser::primary() {
     return Literal { alloc(previous().literal) };
   }
 
+  if (match({IDENTIFIER})){
+    return Variable {previous()};
+  }
+
   if (match({LEFT_PAREN})){
     Expr expr { expression() };
     consume(RIGHT_PAREN, "Expect ')' after expression");
