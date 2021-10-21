@@ -167,6 +167,18 @@ void Interpreter::operator()(PrintStmt stmt){
   std::cout << repr(eval(stmt.expr)) << "\n";
 }
 
+
+void Interpreter::operator()(VarStmt stmt){
+  LiteralVal v;
+  if (
+      !std::holds_alternative<std::monostate>(
+        stmt.initializer)
+  ){
+    v = eval(stmt.initializer);
+  }
+  environment.define(stmt.name.lexeme, v);
+}
+
 void Interpreter::checkNumOperands(Token op, std::vector<LiteralVal> nums){
   for(LiteralVal l : nums){
     if(!std::holds_alternative<long double>(l)){

@@ -7,8 +7,10 @@
 # include "token.hpp"
 # include "expr.hpp"
 # include "stmt.hpp"
+# include "env.hpp"
 
 struct Interpreter {
+  Env environment;
 
   void interpret(std::vector<Stmt>);
 

@@ -2,6 +2,7 @@
 
 #include <variant>
 #include <string>
+
 #include "token.hpp"
 struct Binary;
 struct Grouping;
