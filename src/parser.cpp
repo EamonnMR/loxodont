@@ -148,6 +148,11 @@ Stmt Parser::expressionStmt(){
 }
 
 Stmt Parser::varDeclaration(){
+  // TODO: Parse the thing
+  Token name {consume(IDENTIFIER, "Expected identifier")};
+  Expr expr {expression()};
+  consume(SEMICOLON, "Expected ';' at end of var stmt");
+  return VarStmt {name, expr};
 }
 
 

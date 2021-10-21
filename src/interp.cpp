@@ -33,8 +33,7 @@ LiteralVal Interpreter::operator()(Grouping g){
 }
 
 LiteralVal Interpreter::operator()(Variable v){
-  // TODO: Variable
-  return LiteralVal {};
+  return environment.get(v.name.lexeme);
 }
 
 LiteralVal Interpreter::operator()(Unary u){
@@ -169,12 +168,17 @@ void Interpreter::operator()(PrintStmt stmt){
 
 
 void Interpreter::operator()(VarStmt stmt){
+  std::cout << "Interpret Var Stmt";
   LiteralVal v;
   if (
       !std::holds_alternative<std::monostate>(
         stmt.initializer)
   ){
+
+  std::cout << "Non-null initializer";
     v = eval(stmt.initializer);
+  } else {
+    std::cout << "Null initializer";
   }
   environment.define(stmt.name.lexeme, v);
 }
