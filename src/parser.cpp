@@ -131,6 +131,7 @@ Stmt Parser::declaration(){
 
 Stmt Parser::statement (){
   if(match({PRINT})) return printStmt();
+  if(match({LOCALS})) return localsStmt();
 
   return expressionStmt();
 }
@@ -141,6 +142,11 @@ Stmt Parser::printStmt(){
   return PrintStmt {value};
 }
 
+Stmt Parser::localsStmt(){
+  consume(SEMICOLON, "Expected semicolon at end of locals");
+  return LocalsStmt {};
+}
+
 Stmt Parser::expressionStmt(){
   Expr expr = expression();
   consume(SEMICOLON, "Expected ';' at end of expr");
@@ -148,11 +154,13 @@ Stmt Parser::expressionStmt(){
 }
 
 Stmt Parser::varDeclaration(){
-  // TODO: Parse the thing
   Token name {consume(IDENTIFIER, "Expected identifier")};
-  Expr expr {expression()};
+  Expr initializer {};
+  if( match({EQUAL}) ){
+    initializer = expression();
+  }
   consume(SEMICOLON, "Expected ';' at end of var stmt");
-  return VarStmt {name, expr};
+  return VarStmt {name, initializer};
 }
 
 

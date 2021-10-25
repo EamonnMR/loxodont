@@ -26,6 +26,7 @@ struct Parser {
   Stmt declaration();
   Stmt varDeclaration();
   Stmt emptyStmt(); // Also not in the book, = Null
+  Stmt localsStmt(); // Nonstandard extension
 
   Expr expression();
   Expr equality();

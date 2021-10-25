@@ -50,5 +50,6 @@ static std::unordered_map<std::string, TokenType> keywords {
   {"true",   TRUE},
   {"var",    VAR},
   {"while",  WHILE},
+  {"locals", LOCALS},
 };
 

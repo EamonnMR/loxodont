@@ -18,10 +18,14 @@ struct VarStmt {
   Expr initializer;
 };
 
+struct LocalsStmt {
+};
+
 typedef std::variant<
   ExpressionStmt,
   PrintStmt,
-  VarStmt
+  VarStmt,
+  LocalsStmt
 > Stmt;
 
 struct StmtPrinter{

@@ -166,6 +166,9 @@ void Interpreter::operator()(PrintStmt stmt){
   std::cout << repr(eval(stmt.expr)) << "\n";
 }
 
+void Interpreter::operator()(LocalsStmt stmt){
+  environment.printLocals();
+}
 
 void Interpreter::operator()(VarStmt stmt){
   std::cout << "Interpret Var Stmt";

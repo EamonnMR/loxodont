@@ -25,6 +25,9 @@ struct Interpreter {
   void operator()(PrintStmt);
   void operator()(ExpressionStmt);
   void operator()(VarStmt);
+
+  // ExLox
+  void operator()(LocalsStmt);
   
   void eval(Stmt);
 

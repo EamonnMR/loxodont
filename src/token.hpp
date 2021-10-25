@@ -32,6 +32,8 @@ enum TokenType {
   // Keywords.
   AND, KW_CLASS, ELSE, FALSE, FUN, KW_FOR, KW_IF, NIL, OR,
   PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+  // ExLox Keywords
+  LOCALS,
 
   KW_EOF
 };
