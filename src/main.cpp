@@ -50,13 +50,16 @@ void runFile(char* filename){
 }
 
 void runPrompt(){
+  Interpreter interpreter {};
   while(true){
     hadError = false;
     char* input_raw {readline("loxodont> ")};
     add_history(input_raw);
     std::string input {input_raw};
-    // std::cout << input << "\n";
-    run(input);
+    Scanner scanner {input};
+    std::vector<Token> tokens{scanner.scanTokens()};
+    Parser parser {tokens};
+    interpreter.interpret(parser.parse());
   }
 }
 #ifndef testmode

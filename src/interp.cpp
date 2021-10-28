@@ -171,17 +171,13 @@ void Interpreter::operator()(LocalsStmt stmt){
 }
 
 void Interpreter::operator()(VarStmt stmt){
-  std::cout << "Interpret Var Stmt";
   LiteralVal v;
   if (
       !std::holds_alternative<std::monostate>(
         stmt.initializer)
   ){
 
-  std::cout << "Non-null initializer";
     v = eval(stmt.initializer);
-  } else {
-    std::cout << "Null initializer";
   }
   environment.define(stmt.name.lexeme, v);
 }
