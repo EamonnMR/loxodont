@@ -36,6 +36,12 @@ LiteralVal Interpreter::operator()(Variable v){
   return environment.get(v.name.lexeme);
 }
 
+LiteralVal Interpreter::operator()(Assignment a){
+  LiteralVal value = eval(*a.value);
+  environment.assign(a.name.lexeme, value);
+  return value;
+}
+
 LiteralVal Interpreter::operator()(Unary u){
   Expr right = *u.right;
   LiteralVal r { eval(right) };

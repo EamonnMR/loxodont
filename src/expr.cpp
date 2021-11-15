@@ -39,6 +39,10 @@ std::string ASTPrinter::operator()(Variable v){
   return v.name.toString();
 }
 
+std::string ASTPrinter::operator()(Assignment a){
+  return a.name.toString() + " = " + visit(*a.value)
+}
+
 std::string ASTPrinter::visit(Expr e){
   return std::visit(*this, e);
 }

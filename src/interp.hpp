@@ -19,6 +19,7 @@ struct Interpreter {
   LiteralVal operator()(Literal);
   LiteralVal operator()(Unary);
   LiteralVal operator()(Variable);
+  LiteralVal operator()(Assignment);
   LiteralVal operator()(std::monostate);
 
   LiteralVal eval(Expr);

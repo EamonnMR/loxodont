@@ -38,7 +38,21 @@ std::vector<Stmt> Parser::parse(){
  */
 
 Expr Parser::expression(){
-  return equality();
+  return assignment();
+  // return equality();
+}
+
+Expr Parser::assignment(){
+  Expr expr = equality();
+  if(match({EQUAL})){
+    Token equals = previous();
+    Expr value = assignment()  // a = b = c = 1
+
+    if(std::holds_alternative<Variable>(equals)){
+      Token name = std::get<Variable>(equals).name;
+      return Assignment{name, alloc(value)};
+    }
+    throw parseError(equals, "Invalid assignment target");
 }
 
 Expr Parser::equality(){
